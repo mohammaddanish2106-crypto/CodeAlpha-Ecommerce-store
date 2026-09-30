@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Delete Product — ShopEasy{% endblock %}
+{% block content %}
+<div class="panel-wrap" style="max-width:600px;">
+  <div class="confirm-card">
+    <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+    <h2>Delete Product?</h2>
+    <p>
+      You are about to permanently delete
+      <strong>{{ product.name }}</strong>.
+      This action cannot be undone.
+    </p>
+    <div class="confirm-actions">
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-trash"></i> Yes, Delete
+        </button>
+      </form>
+      <a href="{% url 'staff_products' %}" class="btn btn-outline">Cancel</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

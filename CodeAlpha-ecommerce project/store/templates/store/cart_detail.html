@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Cart | ShopEasy{% endblock %}
+
+{% block content %}
+<div class="container page-section">
+    <div class="page-heading">
+        <h1><i class="fas fa-shopping-cart"></i> Your Cart</h1>
+        <nav class="breadcrumb">
+            <a href="{% url 'landing' %}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Cart</span>
+        </nav>
+    </div>
+
+    {% if cart.items.all %}
+    <div class="cart-layout">
+
+        <!-- Cart Items -->
+        <div class="cart-items-col">
+            <div class="cart-card">
+                <div class="cart-card-header">
+                    <span>{{ cart.total_items }} item{{ cart.total_items|pluralize }} in your cart</span>
+                    <a href="{% url 'product_list' %}" class="continue-shopping">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+
+                {% for item in cart.items.all %}
+                <div class="cart-item">
+                    <a href="{{ item.product.get_absolute_url }}" class="cart-item-img">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="cart-img-placeholder"><i class="fas fa-image"></i></div>
+                        {% endif %}
+                    </a>
+                    <div class="cart-item-info">
+                        <span class="cart-item-cat">{{ item.product.category.name }}</span>
+                        <h3><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></h3>
+                        <span class="cart-item-price">${{ item.product.price }} each</span>
+                    </div>
+                    <div class="cart-item-actions">
+                        <form method="post" action="{% url 'cart_update' item.id %}" class="qty-form">
+                            {% csrf_token %}
+                            <div class="qty-control">
+                                <button type="button" class="qty-btn" data-delta="-1">−</button>
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="qty-input-inline">
+                                <button type="button" class="qty-btn" data-delta="1">+</button>
+                            </div>
+                            <button type="submit" class="update-btn"><i class="fas fa-sync-alt"></i></button>
+                        </form>
+                        <form method="post" action="{% url 'cart_remove' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-item-btn" title="Remove">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="cart-item-subtotal">${{ item.subtotal }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="cart-summary-col">
+            <div class="cart-summary-card">
+                <h2>Order Summary</h2>
+                <div class="summary-row">
+                    <span>Subtotal ({{ cart.total_items }} items)</span>
+                    <span>${{ cart.total_price }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span class="free-shipping">
+                        {% if cart.total_price >= 50 %}FREE{% else %}$5.99{% endif %}
+                    </span>
+                </div>
+                {% if cart.total_price < 50 %}
+                <div class="shipping-progress">
+                    <p>Add <strong>${{ 50|add:cart.total_price|floatformat:2 }}</strong> more for free shipping</p>
+                </div>
+                {% endif %}
+                <div class="summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Total</span>
+                    <span>${{ cart.total_price }}</span>
+                </div>
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-full btn-lg checkout-btn">
+                    <i class="fas fa-lock"></i> Proceed to Checkout
+                </a>
+                <div class="secure-badges">
+                    <i class="fas fa-lock"></i> Secure checkout
+                    &nbsp;|&nbsp;
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="empty-state cart-empty">
+        <div class="empty-icon"><i class="fas fa-shopping-cart"></i></div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything to your cart yet.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-store"></i> Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login | ShopEasy{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-split">
+
+        <!-- Left Panel -->
+        <div class="auth-left">
+            <div class="auth-left-content">
+                <a href="{% url 'landing' %}" class="auth-logo">
+                    <i class="fas fa-shopping-bag"></i> ShopEasy
+                </a>
+                <h2>Welcome back!</h2>
+                <p>Sign in to access your orders, wishlist, and exclusive deals.</p>
+                <div class="auth-features">
+                    <div class="auth-feature"><i class="fas fa-box"></i> Track your orders in real time</div>
+                    <div class="auth-feature"><i class="fas fa-tags"></i> Access member-only discounts</div>
+                    <div class="auth-feature"><i class="fas fa-heart"></i> Save your favourite items</div>
+                    <div class="auth-feature"><i class="fas fa-bolt"></i> Faster checkout every time</div>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80" alt="Shopping" class="auth-bg-img">
+        </div>
+
+        <!-- Right Panel: Form -->
+        <div class="auth-right">
+            <div class="auth-form-wrap">
+                <h1>Sign In</h1>
+                <p class="auth-subtitle">Don't have an account? <a href="{% url 'register' %}">Create one free</a></p>
+
+                <form method="post" class="auth-form" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="form-error-box">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Invalid username or password. Please try again.
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label for="id_username"><i class="fas fa-user"></i> Username</label>
+                        <input type="text" name="username" id="id_username"
+                               placeholder="Enter your username"
+                               value="{{ form.username.value|default:'' }}"
+                               autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_password"><i class="fas fa-lock"></i> Password</label>
+                        <div class="password-wrap">
+                            <input type="password" name="password" id="id_password"
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password" required>
+                            <button type="button" class="toggle-password" data-target="id_password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>or continue with</span></div>
+
+                <div class="social-auth">
+                    <button class="social-btn" onclick="alert('Social login coming soon!')">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="social-btn" onclick="alert('Social login coming soon!')">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                </div>
+
+                <p class="auth-footer-link">
+                    New to ShopEasy? <a href="{% url 'register' %}">Create a free account</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

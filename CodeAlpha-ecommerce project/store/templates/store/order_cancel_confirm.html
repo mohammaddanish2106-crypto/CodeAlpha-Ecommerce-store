@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Cancel Order #{{ order.id }} — ShopEasy{% endblock %}
+{% block content %}
+<div class="panel-wrap" style="max-width:600px;">
+  <div class="confirm-card">
+    <div class="confirm-icon"><i class="fas fa-times-circle"></i></div>
+    <h2>Cancel Order #{{ order.id }}?</h2>
+    <p>
+      This will cancel your order totalling <strong>${{ order.total_price }}</strong>
+      and restore all items back to stock. This cannot be undone.
+    </p>
+    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:1.5rem;text-align:left;">
+      {% for item in order.items.all %}
+        <div style="display:flex;justify-content:space-between;padding:.3rem 0;font-size:.9rem;">
+          <span>{{ item.product.name }} × {{ item.quantity }}</span>
+          <span>${{ item.subtotal }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="confirm-actions">
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-times"></i> Yes, Cancel Order
+        </button>
+      </form>
+      <a href="{% url 'order_detail' order.id %}" class="btn btn-outline">Keep Order</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout | ShopEasy{% endblock %}
+
+{% block content %}
+<div class="container page-section">
+    <div class="page-heading">
+        <h1><i class="fas fa-credit-card"></i> Checkout</h1>
+        <nav class="breadcrumb">
+            <a href="{% url 'landing' %}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'cart_detail' %}">Cart</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Checkout</span>
+        </nav>
+    </div>
+
+    <!-- Steps -->
+    <div class="checkout-steps">
+        <div class="step active"><span>1</span> Shipping</div>
+        <div class="step-line"></div>
+        <div class="step"><span>2</span> Payment</div>
+        <div class="step-line"></div>
+        <div class="step"><span>3</span> Confirm</div>
+    </div>
+
+    <div class="checkout-layout">
+
+        <!-- Shipping Form -->
+        <div class="checkout-form-col">
+            <div class="checkout-card">
+                <h2><i class="fas fa-map-marker-alt"></i> Shipping Information</h2>
+                <form method="post" class="checkout-form" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <span class="field-error">{{ form.full_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>Street Address</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <span class="field-error">{{ form.address.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                                <span class="field-error">{{ form.city.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <span class="field-error">{{ form.phone.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="checkout-card" style="margin-top:20px; background:#f8fafc;">
+                        <h2 style="font-size:1rem;"><i class="fas fa-credit-card"></i> Payment Method</h2>
+                        <div class="payment-options">
+                            <label class="payment-opt selected">
+                                <input type="radio" name="payment" value="cod" checked>
+                                <i class="fas fa-money-bill-wave"></i> Cash on Delivery
+                            </label>
+                            <label class="payment-opt">
+                                <input type="radio" name="payment" value="card">
+                                <i class="fas fa-credit-card"></i> Credit / Debit Card
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:24px;">
+                        <i class="fas fa-check-circle"></i> Place Order — ${{ cart.total_price }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="checkout-summary-col">
+            <div class="checkout-card">
+                <h2><i class="fas fa-receipt"></i> Your Order</h2>
+                <div class="order-items-list">
+                    {% for item in cart.items.all %}
+                    <div class="order-item-row">
+                        <div class="order-item-img">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                                <div class="cart-img-placeholder"><i class="fas fa-image"></i></div>
+                            {% endif %}
+                            <span class="order-item-qty">{{ item.quantity }}</span>
+                        </div>
+                        <span class="order-item-name">{{ item.product.name }}</span>
+                        <span class="order-item-price">${{ item.subtotal }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row">
+                    <span>Subtotal</span><span>${{ cart.total_price }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span class="free-shipping">{% if cart.total_price >= 50 %}FREE{% else %}$5.99{% endif %}</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Total</span><span>${{ cart.total_price }}</span>
+                </div>
+                <div class="secure-badges" style="margin-top:12px;">
+                    <i class="fas fa-lock"></i> 256-bit SSL Encryption
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ShopEasy — Discover Amazing Products{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-inner">
+        <div class="hero-text" data-aos="fade-right">
+            <span class="hero-tag"><i class="fas fa-bolt"></i> New Arrivals 2026</span>
+            <h1>Shop Smarter,<br>Live <span class="gradient-text">Better</span></h1>
+            <p>Explore thousands of curated products across electronics, fashion, books, home & more — all at unbeatable prices.</p>
+            <div class="hero-actions">
+                <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-bag"></i> Shop Now
+                </a>
+                <a href="#categories" class="btn btn-outline btn-lg">
+                    <i class="fas fa-th-large"></i> Browse Categories
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><strong>10K+</strong><span>Products</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><strong>50K+</strong><span>Customers</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><strong>4.9★</strong><span>Rating</span></div>
+            </div>
+        </div>
+        <div class="hero-image" data-aos="fade-left">
+            <div class="hero-img-wrap">
+                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=700&q=80" alt="Shopping" loading="lazy">
+                <div class="hero-badge-float badge-float-1">
+                    <i class="fas fa-truck"></i> Free Delivery
+                </div>
+                <div class="hero-badge-float badge-float-2">
+                    <i class="fas fa-shield-alt"></i> Secure Payment
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f8fafc"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== TRUST STRIP ===== -->
+<section class="trust-strip">
+    <div class="container trust-grid">
+        <div class="trust-item">
+            <i class="fas fa-truck"></i>
+            <div>
+                <strong>Free Shipping</strong>
+                <span>On orders over $50</span>
+            </div>
+        </div>
+        <div class="trust-item">
+            <i class="fas fa-undo-alt"></i>
+            <div>
+                <strong>Easy Returns</strong>
+                <span>30-day return policy</span>
+            </div>
+        </div>
+        <div class="trust-item">
+            <i class="fas fa-lock"></i>
+            <div>
+                <strong>Secure Payment</strong>
+                <span>SSL encrypted checkout</span>
+            </div>
+        </div>
+        <div class="trust-item">
+            <i class="fas fa-headset"></i>
+            <div>
+                <strong>24/7 Support</strong>
+                <span>Always here to help</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CATEGORIES ===== -->
+<section class="section categories-section" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <h2>Shop by Category</h2>
+            <p>Find everything you need, all in one place</p>
+        </div>
+        <div class="categories-grid">
+            {% for cat in categories %}
+            <a href="{% url 'product_list' %}?category={{ cat.slug }}" class="cat-card cat-{{ cat.slug }}">
+                <div class="cat-icon">
+                    {% if cat.slug == 'electronics' %}<i class="fas fa-laptop"></i>
+                    {% elif cat.slug == 'clothing' %}<i class="fas fa-tshirt"></i>
+                    {% elif cat.slug == 'books' %}<i class="fas fa-book-open"></i>
+                    {% elif cat.slug == 'home-kitchen' %}<i class="fas fa-home"></i>
+                    {% elif cat.slug == 'sports' %}<i class="fas fa-dumbbell"></i>
+                    {% elif cat.slug == 'beauty' %}<i class="fas fa-spa"></i>
+                    {% else %}<i class="fas fa-tag"></i>{% endif %}
+                </div>
+                <span class="cat-name">{{ cat.name }}</span>
+                <span class="cat-count">{{ cat.products.count }} items</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURED PRODUCTS ===== -->
+<section class="section featured-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Products</h2>
+            <p>Handpicked just for you</p>
+            <a href="{% url 'product_list' %}" class="see-all-link">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <div class="product-card" data-aos="fade-up">
+                <a href="{{ product.get_absolute_url }}" class="product-img-wrap">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                        <div class="product-img-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    {% endif %}
+                    {% if product.in_stock %}
+                        <span class="product-badge badge-new">New</span>
+                    {% else %}
+                        <span class="product-badge badge-out">Sold Out</span>
+                    {% endif %}
+                    <div class="product-overlay">
+                        <span><i class="fas fa-eye"></i> Quick View</span>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3 class="product-name">
+                        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                    </h3>
+                    <div class="product-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        <span>({{ product.stock }})</span>
+                    </div>
+                    <div class="product-footer">
+                        <span class="product-price">${{ product.price }}</span>
+                        {% if product.in_stock %}
+                        <form method="post" action="{% url 'cart_add' product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="add-cart-btn" title="Add to cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </form>
+                        {% else %}
+                        <button class="add-cart-btn disabled" disabled>
+                            <i class="fas fa-ban"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-th-large"></i> Browse All Products
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PROMO BANNER ===== -->
+<section class="promo-banner">
+    <div class="container promo-inner">
+        <div class="promo-text">
+            <span class="promo-tag">Limited Time</span>
+            <h2>Summer Sale — Up to <span>50% OFF</span></h2>
+            <p>Don't miss out on our biggest sale of the year. Shop hundreds of discounted items now.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-white btn-lg">Shop the Sale</a>
+        </div>
+        <div class="promo-img">
+            <img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=500&q=80" alt="Sale" loading="lazy">
+        </div>
+    </div>
+</section>
+
+<!-- ===== WHY CHOOSE US ===== -->
+<section class="section why-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why Choose ShopEasy?</h2>
+            <p>We're committed to giving you the best shopping experience</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-medal"></i></div>
+                <h3>Premium Quality</h3>
+                <p>Every product is carefully vetted and sourced from trusted suppliers.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-tags"></i></div>
+                <h3>Best Prices</h3>
+                <p>We match and beat competitor prices. Get the most value for your money.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Fast Delivery</h3>
+                <p>Express shipping available. Most orders delivered within 2–3 business days.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-heart"></i></div>
+                <h3>Customer First</h3>
+                <p>Our support team is available 24/7 to assist you with anything you need.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA SIGNUP ===== -->
+{% if not user.is_authenticated %}
+<section class="cta-section">
+    <div class="container cta-inner">
+        <div class="cta-text">
+            <h2>Join 50,000+ Happy Shoppers</h2>
+            <p>Create a free account to track orders, save your cart and get exclusive deals.</p>
+        </div>
+        <div class="cta-actions">
+            <a href="{% url 'register' %}" class="btn btn-white btn-lg">
+                <i class="fas fa-user-plus"></i> Create Free Account
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-white btn-lg">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

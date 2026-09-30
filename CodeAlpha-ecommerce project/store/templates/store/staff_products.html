@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Manage Products — ShopEasy Staff{% endblock %}
+{% block content %}
+<div class="panel-wrap">
+
+  <div class="panel-header">
+    <div>
+      <h1><i class="fas fa-boxes"></i> Product Management</h1>
+      <p>{{ products.count }} product(s) in the catalogue.</p>
+    </div>
+    <div style="display:flex;gap:.75rem;">
+      <a href="{% url 'staff_product_add' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Add Product
+      </a>
+      <a href="{% url 'staff_dashboard' %}" class="btn btn-outline btn-sm">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
+    </div>
+  </div>
+
+  <form method="get" class="filters-bar">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search products…">
+    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Search</button>
+    {% if query %}<a href="{% url 'staff_products' %}" class="btn btn-outline btn-sm">Clear</a>{% endif %}
+  </form>
+
+  <div class="panel-table-wrap">
+    <table class="panel-table">
+      <thead>
+        <tr>
+          <th>Image</th><th>Name</th><th>Category</th><th>Price</th>
+          <th>Stock</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                   style="height:48px;width:48px;object-fit:cover;border-radius:6px;">
+            {% else %}
+              <div style="height:48px;width:48px;background:var(--gray-100);border-radius:6px;
+                          display:flex;align-items:center;justify-content:center;color:var(--gray-400);">
+                <i class="fas fa-image"></i>
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{{ product.get_absolute_url }}" target="_blank" style="font-weight:600;">
+              {{ product.name }}
+            </a>
+          </td>
+          <td>{{ product.category.name }}</td>
+          <td>${{ product.price }}</td>
+          <td>{{ product.stock }}</td>
+          <td>
+            {% if product.stock == 0 %}
+              <span class="badge badge-cancelled">Out of Stock</span>
+            {% elif product.stock <= 5 %}
+              <span class="badge badge-pending">Low Stock</span>
+            {% else %}
+              <span class="badge badge-delivered">In Stock</span>
+            {% endif %}
+          </td>
+          <td style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <a href="{% url 'staff_product_edit' product.id %}" class="btn btn-outline btn-sm">
+              <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'staff_product_delete' product.id %}" class="btn btn-sm btn-danger">
+              <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center;color:var(--gray-500);padding:2rem;">
+            No products found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

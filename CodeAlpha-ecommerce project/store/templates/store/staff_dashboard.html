@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Staff Dashboard — ShopEasy{% endblock %}
+{% block content %}
+<div class="panel-wrap">
+
+  <div class="panel-header">
+    <div>
+      <h1><i class="fas fa-tachometer-alt"></i> Staff Dashboard</h1>
+      <p>Welcome back, {{ request.user.first_name|default:request.user.username }}. Here's today's overview.</p>
+    </div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+      <a href="{% url 'staff_product_add' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Add Product
+      </a>
+      <a href="{% url 'staff_orders' %}" class="btn btn-outline btn-sm">
+        <i class="fas fa-clipboard-list"></i> All Orders
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+      <div class="stat-value">{{ total_orders }}</div>
+      <div class="stat-label">Total Orders</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-value">{{ pending_orders }}</div>
+      <div class="stat-label">Pending Orders</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+      <div class="stat-value">${{ revenue|floatformat:2 }}</div>
+      <div class="stat-label">Total Revenue</div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-boxes"></i></div>
+      <div class="stat-value">{{ total_products }}</div>
+      <div class="stat-label">Products</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="stat-value">{{ low_stock }}</div>
+      <div class="stat-label">Low Stock</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-icon"><i class="fas fa-ban"></i></div>
+      <div class="stat-value">{{ out_of_stock }}</div>
+      <div class="stat-label">Out of Stock</div>
+    </div>
+    {% if request.user.profile.is_admin_role %}
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-value">{{ total_customers }}</div>
+      <div class="stat-label">Customers</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Orders -->
+  <div class="panel-table-wrap">
+    <div class="panel-table-header">
+      <h2><i class="fas fa-clipboard-list"></i> Recent Orders</h2>
+      <a href="{% url 'staff_orders' %}" class="btn btn-outline btn-sm">View All</a>
+    </div>
+    <table class="panel-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in recent_orders %}
+        <tr>
+          <td><strong>#{{ order.id }}</strong></td>
+          <td>
+            {{ order.full_name }}<br>
+            <small style="color:var(--gray-500);">{{ order.user.email }}</small>
+          </td>
+          <td><strong>${{ order.total_price }}</strong></td>
+          <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+          <td>{{ order.created_at|date:"M d, Y" }}</td>
+          <td>
+            <a href="{% url 'staff_order_detail' order.id %}" class="btn btn-outline btn-sm">
+              <i class="fas fa-eye"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:var(--gray-500);">No orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Low Stock -->
+  {% if low_stock_items %}
+  <div class="panel-table-wrap">
+    <div class="panel-table-header">
+      <h2><i class="fas fa-exclamation-triangle" style="color:var(--secondary);"></i> Low Stock Alert</h2>
+      <a href="{% url 'staff_products' %}" class="btn btn-outline btn-sm">Manage Products</a>
+    </div>
+    <table class="panel-table">
+      <thead>
+        <tr><th>Product</th><th>Category</th><th>Stock</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for product in low_stock_items %}
+        <tr>
+          <td><strong>{{ product.name }}</strong></td>
+          <td>{{ product.category.name }}</td>
+          <td>
+            {% if product.stock == 0 %}
+              <span class="badge badge-cancelled">Out of Stock</span>
+            {% else %}
+              <span class="badge badge-pending">{{ product.stock }} left</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'staff_product_edit' product.id %}" class="btn btn-outline btn-sm">
+              <i class="fas fa-edit"></i> Edit
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

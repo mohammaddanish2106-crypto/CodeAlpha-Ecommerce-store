@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders — ShopEasy Staff{% endblock %}
+{% block content %}
+<div class="panel-wrap">
+
+  <div class="panel-header">
+    <div>
+      <h1><i class="fas fa-clipboard-list"></i> Order Management</h1>
+      <p>View and update all customer orders.</p>
+    </div>
+    <a href="{% url 'staff_dashboard' %}" class="btn btn-outline btn-sm">
+      <i class="fas fa-arrow-left"></i> Dashboard
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <form method="get" class="filters-bar">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search by name, username, ID…">
+    <select name="status">
+      <option value="">All Statuses</option>
+      {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if val == status_filter %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
+    <a href="{% url 'staff_orders' %}" class="btn btn-outline btn-sm">Clear</a>
+  </form>
+
+  <div class="panel-table-wrap">
+    <table class="panel-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Customer</th><th>Delivery To</th><th>Items</th>
+          <th>Total</th><th>Status</th><th>Date</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td><strong>#{{ order.id }}</strong></td>
+          <td>
+            {{ order.full_name }}<br>
+            <small style="color:var(--gray-500);">{{ order.user.username }}</small>
+          </td>
+          <td>{{ order.city }}</td>
+          <td>{{ order.items.count }}</td>
+          <td><strong>${{ order.total_price }}</strong></td>
+          <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+          <td>{{ order.created_at|date:"M d, Y" }}</td>
+          <td>
+            <a href="{% url 'staff_order_detail' order.id %}" class="btn btn-outline btn-sm">
+              <i class="fas fa-edit"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align:center;color:var(--gray-500);padding:2rem;">
+            No orders found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

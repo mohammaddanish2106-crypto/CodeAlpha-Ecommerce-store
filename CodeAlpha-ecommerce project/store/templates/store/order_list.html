@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders | ShopEasy{% endblock %}
+
+{% block content %}
+<div class="container page-section">
+    <div class="page-heading">
+        <h1><i class="fas fa-box"></i> My Orders</h1>
+        <nav class="breadcrumb">
+            <a href="{% url 'landing' %}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>My Orders</span>
+        </nav>
+    </div>
+
+    {% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-card-header">
+                <div class="order-id">
+                    <i class="fas fa-receipt"></i>
+                    Order #{{ order.id }}
+                </div>
+                <span class="status-badge status-{{ order.status }}">
+                    {% if order.status == 'pending' %}<i class="fas fa-clock"></i>
+                    {% elif order.status == 'processing' %}<i class="fas fa-cog fa-spin"></i>
+                    {% elif order.status == 'shipped' %}<i class="fas fa-truck"></i>
+                    {% elif order.status == 'delivered' %}<i class="fas fa-check-circle"></i>
+                    {% elif order.status == 'cancelled' %}<i class="fas fa-times-circle"></i>
+                    {% endif %}
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+            <div class="order-card-body">
+                <div class="order-meta">
+                    <div class="order-meta-item">
+                        <span class="meta-label"><i class="fas fa-calendar"></i> Date</span>
+                        <span>{{ order.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="order-meta-item">
+                        <span class="meta-label"><i class="fas fa-map-marker-alt"></i> Ship to</span>
+                        <span>{{ order.full_name }}, {{ order.city }}</span>
+                    </div>
+                    <div class="order-meta-item">
+                        <span class="meta-label"><i class="fas fa-box"></i> Items</span>
+                        <span>{{ order.items.count }} item{{ order.items.count|pluralize }}</span>
+                    </div>
+                    <div class="order-meta-item">
+                        <span class="meta-label"><i class="fas fa-dollar-sign"></i> Total</span>
+                        <strong>${{ order.total_price }}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="order-card-footer">
+                <a href="{% url 'order_detail' order.id %}" class="btn btn-outline">
+                    <i class="fas fa-eye"></i> View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-box-open"></i></div>
+        <h2>No orders yet</h2>
+        <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-shopping-bag"></i> Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

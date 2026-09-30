@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account | ShopEasy{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-split">
+
+        <!-- Left Panel -->
+        <div class="auth-left">
+            <div class="auth-left-content">
+                <a href="{% url 'landing' %}" class="auth-logo">
+                    <i class="fas fa-shopping-bag"></i> ShopEasy
+                </a>
+                <h2>Join our community!</h2>
+                <p>Create your free account and start shopping thousands of amazing products today.</p>
+                <div class="auth-features">
+                    <div class="auth-feature"><i class="fas fa-gift"></i> Welcome discount on first order</div>
+                    <div class="auth-feature"><i class="fas fa-truck"></i> Free shipping on orders over $50</div>
+                    <div class="auth-feature"><i class="fas fa-undo"></i> 30-day hassle-free returns</div>
+                    <div class="auth-feature"><i class="fas fa-shield-alt"></i> Secure & private shopping</div>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&q=80" alt="Shopping" class="auth-bg-img">
+        </div>
+
+        <!-- Right Panel: Form -->
+        <div class="auth-right">
+            <div class="auth-form-wrap">
+                <h1>Create Account</h1>
+                <p class="auth-subtitle">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+
+                <form method="post" class="auth-form" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="id_username"><i class="fas fa-user"></i> Username</label>
+                        <input type="text" name="username" id="id_username"
+                               placeholder="Choose a username"
+                               value="{{ form.username.value|default:'' }}"
+                               autocomplete="username" required>
+                        {% if form.username.errors %}
+                            <span class="field-error">{{ form.username.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_email"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" name="email" id="id_email"
+                               placeholder="your@email.com"
+                               value="{{ form.email.value|default:'' }}"
+                               autocomplete="email" required>
+                        {% if form.email.errors %}
+                            <span class="field-error">{{ form.email.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_password1"><i class="fas fa-lock"></i> Password</label>
+                        <div class="password-wrap">
+                            <input type="password" name="password1" id="id_password1"
+                                   placeholder="Create a strong password"
+                                   autocomplete="new-password" required>
+                            <button type="button" class="toggle-password" data-target="id_password1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {% if form.password1.errors %}
+                            <span class="field-error">{{ form.password1.errors.0 }}</span>
+                        {% endif %}
+                        <div class="password-strength" id="pwd-strength" style="display:none;">
+                            <div class="strength-bar"><div id="strength-fill"></div></div>
+                            <span id="strength-label"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_password2"><i class="fas fa-lock"></i> Confirm Password</label>
+                        <div class="password-wrap">
+                            <input type="password" name="password2" id="id_password2"
+                                   placeholder="Repeat your password"
+                                   autocomplete="new-password" required>
+                            <button type="button" class="toggle-password" data-target="id_password2">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {% if form.password2.errors %}
+                            <span class="field-error">{{ form.password2.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-lg">
+                        <i class="fas fa-user-plus"></i> Create My Account
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>or continue with</span></div>
+
+                <div class="social-auth">
+                    <button class="social-btn" onclick="alert('Social signup coming soon!')">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="social-btn" onclick="alert('Social signup coming soon!')">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                </div>
+
+                <p class="auth-footer-link">
+                    Already have an account? <a href="{% url 'login' %}">Sign in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

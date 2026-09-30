@@ -1,0 +1,17 @@
+# ──────────────────────────────────────────────────────────────────────
+# ShopEasy — Python dependencies
+# Install with:  pip install -r requirements.txt
+# ──────────────────────────────────────────────────────────────────────
+
+# Core framework
+Django==4.2.30
+
+# MySQL database driver
+# Requires the MySQL C client libraries to be installed first:
+#   Ubuntu/Debian : sudo apt install libmysqlclient-dev
+#   macOS (Brew)  : brew install mysql-client
+#   Windows       : install MySQL Connector/C from mysql.com
+mysqlclient==2.2.8
+
+# Image handling (ImageField on Product model)
+Pillow==12.2.0

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — ShopEasy{% endblock %}
+{% block content %}
+<div class="profile-wrap">
+
+  <!-- Sidebar -->
+  <div class="profile-sidebar">
+    <div class="profile-avatar">
+      {{ request.user.username|slice:":1"|upper }}
+    </div>
+    <div class="profile-name">
+      {{ request.user.get_full_name|default:request.user.username }}
+    </div>
+    <div class="profile-email">{{ request.user.email }}</div>
+    <div class="profile-role-badge">
+      <span class="badge badge-{{ profile.role }}">{{ profile.get_role_display }}</span>
+    </div>
+
+    <div style="margin-top:1.5rem;text-align:left;border-top:1px solid var(--gray-200);padding-top:1.25rem;">
+      <p style="font-size:.8rem;color:var(--gray-500);text-transform:uppercase;font-weight:600;margin-bottom:.75rem;">Quick Links</p>
+      <a href="{% url 'order_list' %}" style="display:block;padding:.5rem 0;color:var(--gray-700);font-size:.9rem;">
+        <i class="fas fa-box" style="width:20px;"></i> My Orders
+      </a>
+      <a href="{% url 'cart_detail' %}" style="display:block;padding:.5rem 0;color:var(--gray-700);font-size:.9rem;">
+        <i class="fas fa-shopping-cart" style="width:20px;"></i> My Cart
+      </a>
+      {% if profile.is_staff_or_admin %}
+      <a href="{% url 'staff_dashboard' %}" style="display:block;padding:.5rem 0;color:var(--secondary);font-size:.9rem;">
+        <i class="fas fa-tachometer-alt" style="width:20px;"></i> Staff Dashboard
+      </a>
+      {% endif %}
+      {% if profile.is_admin_role %}
+      <a href="{% url 'admin_users' %}" style="display:block;padding:.5rem 0;color:var(--danger);font-size:.9rem;">
+        <i class="fas fa-users-cog" style="width:20px;"></i> Manage Users
+      </a>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline" style="width:100%;font-size:.85rem;">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div>
+    <div class="profile-main" style="margin-bottom:1.5rem;">
+      <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label>First Name</label>
+            {{ form.first_name }}
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            {{ form.last_name }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          {{ form.email }}
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          {{ form.phone }}
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          {{ form.address }}
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          {{ form.city }}
+        </div>
+        {% for field in form %}
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <p style="color:var(--danger);font-size:.85rem;">{{ field.label }}: {{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+      </form>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="profile-main">
+      <h2><i class="fas fa-box"></i> Recent Orders</h2>
+      {% if recent_orders %}
+        <table class="panel-table" style="margin-top:.75rem;">
+          <thead>
+            <tr><th>#</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            {% for order in recent_orders %}
+            <tr>
+              <td>#{{ order.id }}</td>
+              <td>{{ order.created_at|date:"M d, Y" }}</td>
+              <td>${{ order.total_price }}</td>
+              <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+              <td>
+                <a href="{% url 'order_detail' order.id %}" class="btn btn-outline btn-sm">View</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div style="margin-top:1rem;">
+          <a href="{% url 'order_list' %}" class="btn btn-outline btn-sm">View All Orders</a>
+        </div>
+      {% else %}
+        <p style="color:var(--gray-500);margin-top:.75rem;">You haven't placed any orders yet.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-primary btn-sm" style="margin-top:.75rem;">
+          <i class="fas fa-shopping-bag"></i> Start Shopping
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

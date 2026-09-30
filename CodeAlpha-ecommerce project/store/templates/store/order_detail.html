@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} | ShopEasy{% endblock %}
+
+{% block content %}
+<div class="container page-section">
+    <div class="page-heading">
+        <h1><i class="fas fa-receipt"></i> Order #{{ order.id }}</h1>
+        <nav class="breadcrumb">
+            <a href="{% url 'landing' %}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'order_list' %}">My Orders</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Order #{{ order.id }}</span>
+        </nav>
+    </div>
+
+    <div class="order-detail-layout">
+
+        <!-- Items -->
+        <div class="order-detail-main">
+            <div class="checkout-card">
+                <div class="order-detail-header">
+                    <h2><i class="fas fa-box"></i> Order Items</h2>
+                    <span class="status-badge status-{{ order.status }}">
+                        {% if order.status == 'pending' %}<i class="fas fa-clock"></i>
+                        {% elif order.status == 'processing' %}<i class="fas fa-cog fa-spin"></i>
+                        {% elif order.status == 'shipped' %}<i class="fas fa-truck"></i>
+                        {% elif order.status == 'delivered' %}<i class="fas fa-check-circle"></i>
+                        {% elif order.status == 'cancelled' %}<i class="fas fa-times-circle"></i>
+                        {% endif %}
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="order-items-list">
+                    {% for item in order.items.all %}
+                    <div class="order-item-row">
+                        <div class="order-item-img">
+                            {% if item.product and item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product }}">
+                            {% else %}
+                                <div class="cart-img-placeholder"><i class="fas fa-image"></i></div>
+                            {% endif %}
+                            <span class="order-item-qty">{{ item.quantity }}</span>
+                        </div>
+                        <span class="order-item-name">
+                            {% if item.product %}
+                                <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>
+                            {% else %}
+                                Product no longer available
+                            {% endif %}
+                        </span>
+                        <span class="order-item-price">${{ item.subtotal }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Order Total</span>
+                    <span>${{ order.total_price }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Sidebar -->
+        <div class="order-detail-side">
+            <div class="checkout-card">
+                <h2><i class="fas fa-info-circle"></i> Order Details</h2>
+                <div class="detail-info-list">
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-hashtag"></i> Order ID</span>
+                        <strong>#{{ order.id }}</strong>
+                    </div>
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-calendar"></i> Date Placed</span>
+                        <strong>{{ order.created_at|date:"M d, Y" }}</strong>
+                    </div>
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-clock"></i> Time</span>
+                        <strong>{{ order.created_at|time:"H:i" }}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="checkout-card" style="margin-top:16px;">
+                <h2><i class="fas fa-map-marker-alt"></i> Shipping To</h2>
+                <div class="detail-info-list">
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-user"></i> Name</span>
+                        <strong>{{ order.full_name }}</strong>
+                    </div>
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-home"></i> Address</span>
+                        <strong>{{ order.address }}</strong>
+                    </div>
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-city"></i> City</span>
+                        <strong>{{ order.city }}</strong>
+                    </div>
+                    <div class="detail-info-row">
+                        <span><i class="fas fa-phone"></i> Phone</span>
+                        <strong>{{ order.phone }}</strong>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'order_list' %}" class="btn btn-outline btn-full" style="margin-top:16px;">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+            {% if order.status in 'pending,processing' %}
+            <a href="{% url 'order_cancel' order.id %}" class="btn btn-danger btn-full" style="margin-top:8px;">
+                <i class="fas fa-times-circle"></i> Cancel Order
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
